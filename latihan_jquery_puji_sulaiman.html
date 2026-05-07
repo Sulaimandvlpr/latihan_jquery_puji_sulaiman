@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Latihan jQuery - Puji Sulaiman</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap');
+
+    :root {
+      --hitam: #000000;
+      --putih: #ffffff;
+      --abu-terang: #e0e0e0;
+      --garis: #333333;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--putih);
+      color: var(--hitam);
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+    }
+
+    nav {
+      background: var(--putih);
+      border-bottom: 4px solid var(--hitam);
+      padding: 12px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      box-shadow: 0 4px 0 var(--hitam);
+    }
+
+    .nav-brand {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 11px;
+      border: 3px solid var(--hitam);
+      padding: 8px 14px;
+      animation: blinkBorder 1.5s step-end infinite;
+    }
+
+    @keyframes blinkBorder {
+      0%, 100% { border-color: var(--hitam); }
+      50% { border-color: transparent; }
+    }
+
+    .nav-links { display: flex; gap: 8px; list-style: none; flex-wrap: wrap; }
+
+    .nav-links a {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      text-decoration: none;
+      color: var(--hitam);
+      border: 2px solid var(--hitam);
+      padding: 6px 10px;
+      display: block;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .nav-links a:hover { background: var(--hitam); color: var(--putih); }
+
+    .hero {
+      padding: 60px 40px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .loading-bar {
+      background: var(--hitam);
+      color: var(--putih);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      padding: 10px 16px;
+      letter-spacing: 2px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: rgba(255,255,255,0.15);
+      animation: scanline 2s linear infinite;
+    }
+
+    @keyframes scanline { to { left: 150%; } }
+
+    .hero-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 28px;
+      background: var(--hitam);
+      color: var(--putih);
+      padding: 18px 24px;
+      display: inline-block;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      text-shadow: 3px 3px 0 #555;
+    }
+
+    .hero-sub {
+      border: 3px solid var(--hitam);
+      padding: 20px 24px;
+      max-width: 640px;
+      line-height: 1.7;
+      font-size: 22px;
+      box-shadow: 5px 5px 0 var(--hitam);
+    }
+
+    .section-wrapper {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px 60px;
+    }
+
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      border-left: 8px solid var(--hitam);
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      margin-top: 48px;
+      background: var(--abu-terang);
+    }
+
+    .section-desc {
+      font-size: 20px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      color: #222;
+      border-bottom: 2px dashed var(--garis);
+      padding-bottom: 12px;
+    }
+
+    .pixel-card {
+      border: 3px solid var(--hitam);
+      padding: 24px;
+      background: var(--putih);
+      box-shadow: 6px 6px 0 var(--hitam);
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .pixel-card::before {
+      content: attr(data-label);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      position: absolute;
+      top: -12px; left: 12px;
+      background: var(--hitam);
+      color: var(--putih);
+      padding: 4px 8px;
+    }
+
+    .btn-pixel {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      border: 3px solid var(--hitam);
+      background: var(--putih);
+      color: var(--hitam);
+      padding: 10px 18px;
+      cursor: pointer;
+      display: inline-block;
+      margin: 6px 6px 6px 0;
+      user-select: none;
+      transition: all 0.08s steps(1);
+    }
+
+    .btn-pixel:hover {
+      background: var(--hitam);
+      color: var(--putih);
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0 #555;
+    }
+
+    .btn-pixel:active { transform: translate(0, 0); box-shadow: none; }
+
+    .btn-pixel.solid { background: var(--hitam); color: var(--putih); }
+    .btn-pixel.solid:hover { background: var(--putih); color: var(--hitam); }
+
+    .kotak-demo {
+      border: 3px solid var(--hitam);
+      padding: 20px;
+      margin-top: 16px;
+      font-size: 20px;
+      line-height: 1.7;
+      background: var(--abu-terang);
+    }
+
+    .pixel-sprite {
+      display: inline-block;
+      width: 16px; height: 16px;
+      background: var(--hitam);
+      margin-right: 8px;
+      vertical-align: middle;
+      box-shadow: 2px 2px 0 #555;
+    }
+
+    .item-list { list-style: none; margin: 12px 0; }
+
+    .item-list li {
+      border: 2px solid var(--hitam);
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      background: var(--putih);
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .speed-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+    .arena {
+      border: 3px solid var(--hitam);
+      height: 90px;
+      position: relative;
+      margin-top: 16px;
+      background: var(--abu-terang);
+      overflow: hidden;
+    }
+
+    .arena-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      position: absolute;
+      bottom: 6px; right: 10px;
+      color: #999;
+    }
+
+    .kotak-karakter {
+      width: 56px; height: 56px;
+      background: var(--hitam);
+      position: absolute;
+      left: 0; top: 17px;
+    }
+
+    #status-callback {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      padding: 10px 14px;
+      border: 2px solid var(--hitam);
+      display: inline-block;
+      margin-top: 12px;
+      min-width: 200px;
+    }
+
+    .log-box {
+      margin-top: 12px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 7px;
+      line-height: 2.5;
+      border: 2px solid var(--hitam);
+      padding: 12px;
+      min-height: 70px;
+      background: var(--abu-terang);
+    }
+
+    .highlight {
+      background: var(--hitam);
+      color: var(--putih);
+      padding: 2px 6px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+    }
+
+    .separator { border: none; border-top: 3px solid var(--hitam); margin: 48px 0 0; }
+
+    footer {
+      background: var(--hitam);
+      color: var(--putih);
+      text-align: center;
+      padding: 28px 20px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      letter-spacing: 2px;
+      line-height: 2.2;
+      margin-top: 60px;
+      border-top: 4px solid var(--putih);
+    }
+
+    .blink { animation: blinkText 1s step-end infinite; }
+
+    @keyframes blinkText {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--putih); border-left: 2px solid var(--hitam); }
+    ::-webkit-scrollbar-thumb { background: var(--hitam); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">PUJI SULAIMAN</div>
+  <ul class="nav-links">
+    <li><a href="#sembunyikan">SEMBUNYIKAN</a></li>
+    <li><a href="#hilang-muncul">HILANG-MUNCUL</a></li>
+    <li><a href="#geser">GESER</a></li>
+    <li><a href="#animasi">ANIMASI</a></li>
+    <li><a href="#callback">CALLBACK</a></li>
+    <li><a href="#chaining">CHAINING</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="loading-bar">[MEMUAT HALAMAN LATIHAN JQUERY...]</div>
+  <div class="hero-title">LATIHAN JQUERY</div>
+  <div class="hero-sub">
+    Tema retro 8-bit hitam putih, satu halaman, dan animasi interaktif untuk pengalaman yang lebih hidup. Dibuat oleh Puji Sulaiman menggunakan jQuery dari materi W3Schools.
+  </div>
+</div>
+
+<div class="section-wrapper">
+
+  <!-- HIDE / SHOW -->
+  <hr class="separator" />
+  <div id="sembunyikan">
+    <div class="section-title">01 SEMBUNYIKAN DAN TAMPILKAN (HIDE / SHOW)</div>
+    <p class="section-desc">
+      jQuery <span class="highlight">.hide()</span> menyembunyikan elemen dan <span class="highlight">.show()</span> menampilkan kembali elemen yang tersembunyi.
+    </p>
+
+    <div class="pixel-card" data-label="HIDE DAN SHOW DASAR">
+      <button class="btn-pixel" id="btn-hide">Sembunyikan Pesan</button>
+      <button class="btn-pixel solid" id="btn-show">Tampilkan Pesan</button>
+      <div class="kotak-demo" id="panel-toggle" style="background: var(--putih);">
+        <span class="pixel-sprite"></span>Ini adalah pesan dari dunia 8-bit. Kamu bisa menyembunyikan dan menampilkan pesan ini menggunakan tombol di atas.
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="HIDE DAN SHOW DENGAN KECEPATAN">
+      <div class="speed-row">
+        <button class="btn-pixel" id="btn-hide-slow">Sembunyi Pelan</button>
+        <button class="btn-pixel" id="btn-hide-fast">Sembunyi Cepat</button>
+        <button class="btn-pixel solid" id="btn-show-slow">Muncul Pelan</button>
+        <button class="btn-pixel solid" id="btn-show-fast">Muncul Cepat</button>
+      </div>
+      <div class="kotak-demo" id="panel-speed">
+        <span class="pixel-sprite"></span>Karakter ini bisa sembunyi dengan kecepatan berbeda. Coba semua tombolnya dan lihat perbedaannya.
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="TOGGLE">
+      <button class="btn-pixel" id="btn-toggle">Toggle Daftar Item</button>
+      <ul class="item-list" id="daftar-item">
+        <li><span class="pixel-sprite"></span>Pedang Api Level 5</li>
+        <li><span class="pixel-sprite"></span>Perisai Besi Level 3</li>
+        <li><span class="pixel-sprite"></span>Ramuan Merah x10</li>
+        <li><span class="pixel-sprite"></span>Kunci Dungeon x2</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FADE -->
+  <hr class="separator" />
+  <div id="hilang-muncul">
+    <div class="section-title">02 PUDAR DAN MUNCUL (FADE)</div>
+    <p class="section-desc">
+      jQuery <span class="highlight">.fadeIn()</span> dan <span class="highlight">.fadeOut()</span> membuat elemen muncul dan menghilang secara perlahan. <span class="highlight">.fadeToggle()</span> menggabungkan keduanya. <span class="highlight">.fadeTo()</span> mengatur tingkat transparansi.
+    </p>
+
+    <div class="pixel-card" data-label="FADE OUT DAN FADE IN">
+      <button class="btn-pixel" id="btn-fadeout">Pudar Keluar</button>
+      <button class="btn-pixel solid" id="btn-fadein">Pudar Masuk</button>
+      <div class="kotak-demo" id="karakter-1">
+        <span class="pixel-sprite"></span>Pahlawan sedang berdiri. Tekan tombol untuk membuat dia menghilang dan muncul kembali.
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="FADE TOGGLE">
+      <button class="btn-pixel" id="btn-fadetoggle">Toggle Pudar</button>
+      <div class="kotak-demo" id="karakter-2">
+        <span class="pixel-sprite"></span>Musuh muncul dari kegelapan. Tekan tombol berulang kali untuk melihat efek toggle pudar.
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="FADE TO (TRANSPARANSI)">
+      <button class="btn-pixel" id="btn-fadeto-25">25 Persen</button>
+      <button class="btn-pixel" id="btn-fadeto-50">50 Persen</button>
+      <button class="btn-pixel solid" id="btn-fadeto-100">100 Persen</button>
+      <div class="kotak-demo" id="panel-fadeto">
+        <span class="pixel-sprite"></span>Tingkat transparansi bisa diatur. Klik tombol untuk mengubah tingkat kecerahan elemen ini.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE -->
+  <hr class="separator" />
+  <div id="geser">
+    <div class="section-title">03 GESER NAIK DAN TURUN (SLIDE)</div>
+    <p class="section-desc">
+      jQuery <span class="highlight">.slideDown()</span> membuka elemen dari atas ke bawah, <span class="highlight">.slideUp()</span> menutup dari bawah ke atas, dan <span class="highlight">.slideToggle()</span> menggabungkan keduanya.
+    </p>
+
+    <div class="pixel-card" data-label="SLIDE DOWN DAN SLIDE UP">
+      <button class="btn-pixel" id="btn-slidedown">Buka Panel</button>
+      <button class="btn-pixel solid" id="btn-slideup">Tutup Panel</button>
+      <div class="kotak-demo" id="panel-slide" style="display:none;">
+        <span class="pixel-sprite"></span>Panel rahasia terbuka. Di sinilah peta harta karun tersimpan. Tekan tombol tutup untuk menyembunyikannya kembali.
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="SLIDE TOGGLE">
+      <button class="btn-pixel" id="btn-slidetoggle">Buka / Tutup Inventaris</button>
+      <ul class="item-list" id="inventaris" style="display:none;">
+        <li><span class="pixel-sprite"></span>Helm Emas Level 8</li>
+        <li><span class="pixel-sprite"></span>Baju Besi Mithril</li>
+        <li><span class="pixel-sprite"></span>Sepatu Angin</li>
+        <li><span class="pixel-sprite"></span>Cincin Keberuntungan</li>
+        <li><span class="pixel-sprite"></span>Tongkat Petir Level 10</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ANIMATE -->
+  <hr class="separator" />
+  <div id="animasi">
+    <div class="section-title">04 ANIMASI (ANIMATE)</div>
+    <p class="section-desc">
+      jQuery <span class="highlight">.animate()</span> digunakan untuk menganimasikan properti CSS secara kustom. Kamu bisa menggerakkan elemen, mengubah ukuran, dan mengatur transparansi.
+    </p>
+
+    <div class="pixel-card" data-label="GERAK KE KANAN">
+      <button class="btn-pixel" id="btn-anim-gerak">Gerakkan Karakter</button>
+      <button class="btn-pixel solid" id="btn-anim-reset">Reset Posisi</button>
+      <div class="arena" id="arena-gerak">
+        <div class="kotak-karakter" id="kotak-animasi"></div>
+        <span class="arena-label">ARENA</span>
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="UBAH UKURAN">
+      <button class="btn-pixel" id="btn-anim-besar">Perbesar</button>
+      <button class="btn-pixel solid" id="btn-anim-kecil">Perkecil</button>
+      <div style="height:150px; display:flex; align-items:center;">
+        <div id="kotak-ukuran" style="width:60px; height:60px; background:var(--hitam); display:flex; align-items:center; justify-content:center;">
+          <span style="color:var(--putih); font-family:'Press Start 2P',monospace; font-size:7px;">BOSS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="GABUNG ANIMASI">
+      <button class="btn-pixel" id="btn-anim-gabung">Jalankan Semua Animasi</button>
+      <div class="arena" id="arena-gabung">
+        <div class="kotak-karakter" id="kotak-gabung"></div>
+        <span class="arena-label">ARENA GABUNG</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALLBACK -->
+  <hr class="separator" />
+  <div id="callback">
+    <div class="section-title">05 FUNGSI SETELAH ANIMASI (CALLBACK)</div>
+    <p class="section-desc">
+      Callback adalah fungsi yang dijalankan setelah animasi selesai. Ini memastikan perintah berjalan berurutan, bukan bersamaan.
+    </p>
+
+    <div class="pixel-card" data-label="CALLBACK HIDE">
+      <button class="btn-pixel" id="btn-cb-hide">Sembunyikan dan Beri Notifikasi</button>
+      <button class="btn-pixel solid" id="btn-cb-show">Tampilkan Kembali</button>
+      <div class="kotak-demo" id="panel-callback">
+        <span class="pixel-sprite"></span>Tekan tombol kiri. Setelah elemen ini selesai disembunyikan, notifikasi akan muncul di bawah.
+      </div>
+      <div id="status-callback">STATUS: SIAP</div>
+    </div>
+
+    <div class="pixel-card" data-label="URUTAN CALLBACK">
+      <button class="btn-pixel" id="btn-cb-chain">Jalankan Urutan Callback</button>
+      <div class="log-box" id="urutan-log"></div>
+    </div>
+  </div>
+
+  <!-- CHAINING -->
+  <hr class="separator" />
+  <div id="chaining">
+    <div class="section-title">06 METODE BERANTAI (CHAINING)</div>
+    <p class="section-desc">
+      Chaining memungkinkan kamu menjalankan beberapa metode jQuery dalam satu baris kode, dirantai menggunakan titik. Ini membuat kode lebih singkat dan efisien.
+    </p>
+
+    <div class="pixel-card" data-label="CHAINING DASAR">
+      <button class="btn-pixel" id="btn-chain-1">Jalankan Chaining 1</button>
+      <div class="kotak-demo" id="kotak-chain-1">
+        <span class="pixel-sprite"></span>Elemen ini akan diubah warnanya, lalu disembunyikan, lalu ditampilkan kembali - semua dalam satu rantai perintah.
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="CHAINING ANIMASI">
+      <button class="btn-pixel" id="btn-chain-2">Jalankan Chaining Animasi</button>
+      <div class="arena" id="arena-chain">
+        <div class="kotak-karakter" id="kotak-chain"></div>
+        <span class="arena-label">LINTASAN CHAINING</span>
+      </div>
+    </div>
+
+    <div class="pixel-card" data-label="CHAINING PANJANG">
+      <button class="btn-pixel" id="btn-chain-3">Chaining Panjang</button>
+      <div class="kotak-demo" id="kotak-chain-3" style="margin-top:16px;">
+        <span class="pixel-sprite"></span>Elemen ini akan berubah warna latar, pudar keluar, lalu muncul kembali dengan warna aslinya. Semua dalam satu baris chaining.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="blink">[ GAME OVER - INSERT COIN TO CONTINUE ]</div>
+  <div style="margin-top:14px;">LATIHAN JQUERY - PUJI SULAIMAN</div>
+  <div style="margin-top:8px; color:#aaa;">JQUERY HIDE/SHOW -- JQUERY CHAINING // W3SCHOOLS</div>
+</footer>
+
+<script>
+$(document).ready(function () {
+
+  // Hide / Show
+  $("#btn-hide").click(function () { $("#panel-toggle").hide(); });
+  $("#btn-show").click(function () { $("#panel-toggle").show(); });
+  $("#btn-hide-slow").click(function () { $("#panel-speed").hide("slow"); });
+  $("#btn-hide-fast").click(function () { $("#panel-speed").hide("fast"); });
+  $("#btn-show-slow").click(function () { $("#panel-speed").show("slow"); });
+  $("#btn-show-fast").click(function () { $("#panel-speed").show("fast"); });
+  $("#btn-toggle").click(function () { $("#daftar-item").toggle(400); });
+
+  // Fade
+  $("#btn-fadeout").click(function () { $("#karakter-1").fadeOut("slow"); });
+  $("#btn-fadein").click(function () { $("#karakter-1").fadeIn("slow"); });
+  $("#btn-fadetoggle").click(function () { $("#karakter-2").fadeToggle(600); });
+  $("#btn-fadeto-25").click(function () { $("#panel-fadeto").fadeTo("slow", 0.25); });
+  $("#btn-fadeto-50").click(function () { $("#panel-fadeto").fadeTo("slow", 0.5); });
+  $("#btn-fadeto-100").click(function () { $("#panel-fadeto").fadeTo("slow", 1); });
+
+  // Slide
+  $("#btn-slidedown").click(function () { $("#panel-slide").slideDown("slow"); });
+  $("#btn-slideup").click(function () { $("#panel-slide").slideUp("slow"); });
+  $("#btn-slidetoggle").click(function () { $("#inventaris").slideToggle(500); });
+
+  // Animate - gerakkan karakter ke kanan
+  $("#btn-anim-gerak").click(function () {
+    var batas = $("#arena-gerak").width() - $("#kotak-animasi").outerWidth();
+    $("#kotak-animasi").animate({ left: batas }, 800);
+  });
+
+  $("#btn-anim-reset").click(function () {
+    $("#kotak-animasi").animate({ left: 0 }, 400);
+  });
+
+  // Animate - ubah ukuran boss
+  $("#btn-anim-besar").click(function () {
+    $("#kotak-ukuran").animate({ width: "130px", height: "130px" }, 500);
+  });
+
+  $("#btn-anim-kecil").click(function () {
+    $("#kotak-ukuran").animate({ width: "60px", height: "60px" }, 500);
+  });
+
+  // Animate - gabungkan gerak, ukuran, dan transparansi
+  $("#btn-anim-gabung").click(function () {
+    var batas = $("#arena-gabung").width() - $("#kotak-gabung").outerWidth();
+    $("#kotak-gabung")
+      .animate({ left: batas, opacity: 0.3, width: "28px", height: "28px" }, 800)
+      .animate({ left: 0, opacity: 1, width: "56px", height: "56px" }, 600);
+  });
+
+  // Callback - notifikasi muncul setelah hide selesai
+  $("#btn-cb-hide").click(function () {
+    $("#status-callback").text("STATUS: MENJALANKAN ANIMASI...");
+    $("#panel-callback").hide(800, function () {
+      $("#status-callback").text("STATUS: ANIMASI SELESAI - ELEMEN TERSEMBUNYI");
+    });
+  });
+
+  $("#btn-cb-show").click(function () {
+    $("#panel-callback").show(400, function () {
+      $("#status-callback").text("STATUS: SIAP");
+    });
+  });
+
+  // Callback - urutan bertahap
+  $("#btn-cb-chain").click(function () {
+    $("#urutan-log").html("");
+    $(this).prop("disabled", true);
+    var tombol = this;
+    $("#urutan-log").append("> [1] MEMULAI URUTAN CALLBACK...<br/>");
+    setTimeout(function () {
+      $("#urutan-log").append("> [2] TAHAP PERTAMA SELESAI<br/>");
+      setTimeout(function () {
+        $("#urutan-log").append("> [3] TAHAP KEDUA SELESAI<br/>");
+        setTimeout(function () {
+          $("#urutan-log").append("> [4] SEMUA TAHAP SELESAI - SELAMAT!<br/>");
+          $(tombol).prop("disabled", false);
+        }, 700);
+      }, 700);
+    }, 700);
+  });
+
+  // Chaining - ubah warna, slideUp, lalu slideDown
+  $("#btn-chain-1").click(function () {
+    $("#kotak-chain-1")
+      .css("background", "#c8c8c8")
+      .slideUp(400)
+      .slideDown(600, function () {
+        $(this).css("background", "#e0e0e0");
+      });
+  });
+
+  // Chaining - animasi berurutan dalam satu rantai
+  $("#btn-chain-2").click(function () {
+    var batas = $("#arena-chain").width() - $("#kotak-chain").outerWidth();
+    $("#kotak-chain")
+      .animate({ left: batas }, 500)
+      .animate({ top: "5px" }, 200)
+      .animate({ left: 0 }, 500)
+      .animate({ top: "17px" }, 200);
+  });
+
+  // Chaining - css, fadeOut, fadeIn dalam satu rantai
+  $("#btn-chain-3").click(function () {
+    $("#kotak-chain-3")
+      .css({ background: "#1a1a1a", color: "#ffffff" })
+      .fadeOut(600)
+      .fadeIn(600, function () {
+        $(this).css({ background: "#e0e0e0", color: "#000000" });
+      });
+  });
+
+});
+</script>
+</body>
+</html>
